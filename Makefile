@@ -16,3 +16,7 @@ gz7_kinetic: dev_tools
 .PHONY: gz9_crystal
 gz9_crystal:
 	docker build  ${DOCKER_ARGS} -t gz9_crystal gz9_crystal
+
+.PHONY: ubuntu_18
+ubuntu_18:
+	docker build  ${DOCKER_ARGS} -t ubuntu_18 ubuntu_18

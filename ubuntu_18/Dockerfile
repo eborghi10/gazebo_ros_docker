@@ -1,7 +1,6 @@
-FROM ros:crystal-ros-base
+FROM ubuntu:18.04
 LABEL maintainer="Emiliano Borghi"
 
-ENV ROS2_DISTRO crystal
 ENV USER packt
 
 # Setup environment
@@ -23,30 +22,6 @@ RUN adduser --gecos "Development User" --disabled-password $USER
 RUN adduser $USER sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER root
-
-# install ros2 packages
-RUN apt-get update && apt-get install -y \
-    ros-$ROS2_DISTRO-desktop=0.6.1-0* \
-    && rm -rf /var/lib/apt/lists/*
-
-# install bootstrap tools
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    ros-$ROS2_DISTRO-gazebo-* \
-  && rm -rf /var/lib/apt/lists/*
-
-# setup keys
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
-
-# setup sources.list
-RUN echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list
-
-# install ros2 packages
-RUN apt-get update && apt-get install -y \
-    ros-$ROS2_DISTRO-ros1-bridge=0.6.2-0* \
-    && rm -rf /var/lib/apt/lists/*
-
-# Source ros2 automatically
-RUN echo ". /opt/ros/$ROS2_DISTRO/setup.bash" >> /home/$USER/.bashrc
 
 # nvidia-docker2 for Ubuntu18.04
 # FROM nvidia/opengl:1.0-glvnd-runtime-ubuntu18.04 as nvidia
@@ -83,13 +58,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY 10_nvidia.json /usr/share/glvnd/egl_vendor.d/10_nvidia.json
 
-# Workspace
-RUN mkdir -p /colcon_ws/src/ && \
-    chown -R $USER /colcon_ws
 USER $USER
-WORKDIR /colcon_ws/
-RUN rosdep update
-USER root
-
-USER $USER
-ENTRYPOINT tmux
+CMD tmux

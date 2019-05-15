@@ -11,7 +11,7 @@ done
 
 IMAGE_NAME=$CONTAINER
 
-NVIDIA_FLAG=""
+NVIDIA_FLAG="--runtime=nvidia"
 if [[ $IMAGE_NAME = *"nvidia"* ]]; then
   NVIDIA_FLAG="--runtime=nvidia"
 fi
