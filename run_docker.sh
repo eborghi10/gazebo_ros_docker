@@ -5,6 +5,7 @@ CONTAINER=""
 while [ "$1" != "" ]; do
     case "$1" in
         -d | --docker )  CONTAINER="$2";  shift;;
+        --no-nvidia ) NVIDIA="FALSE"; shift;;
     esac
     shift
 done
@@ -12,8 +13,8 @@ done
 IMAGE_NAME=$CONTAINER
 
 NVIDIA_FLAG="--runtime=nvidia"
-if [[ $IMAGE_NAME = *"nvidia"* ]]; then
-  NVIDIA_FLAG="--runtime=nvidia"
+if [[ $NVIDIA = "FALSE" ]]; then
+  NVIDIA_FLAG=""
 fi
 
 DOCKER_MOUNT_ARGS="\
