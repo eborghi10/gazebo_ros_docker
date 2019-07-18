@@ -11,6 +11,7 @@ while [ "$1" != "" ]; do
 done
 
 IMAGE_NAME=$CONTAINER
+NAME=$IMAGE_NAME$RANDOM
 
 NVIDIA_FLAG="--runtime=nvidia"
 if [[ $NVIDIA = "FALSE" ]]; then
@@ -30,7 +31,7 @@ DOCKER_CAPABILITIES="--ipc=host \
 DOCKER_NETWORK="--network=host"
 
 xhost +
-docker run --name $IMAGE_NAME --privileged --rm \
+docker run --name $NAME --privileged --rm \
         $DOCKER_CAPABILITIES \
         $DOCKER_MOUNT_ARGS \
         -v /etc/fstab:/etc/fstab:ro \
