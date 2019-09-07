@@ -6,7 +6,7 @@ DOCKER_ARGS?=
 # Stable and local targets
 
 .PHONY: gz9_kinetic
-gz9_kinetic: dev_tools
+gz9_kinetic:
 	docker build  ${DOCKER_ARGS} -t gz9_kinetic gz9_kinetic
 
 .PHONY: gz9_crystal
