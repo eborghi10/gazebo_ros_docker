@@ -13,11 +13,17 @@ ENV \
   DEBIAN_FRONTEND=noninteractive \
   TERM=xterm
 
+RUN apt-get remove -y --purge xserver-xorg
+
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+    mesa-utils \
     sudo \
     tmux \
-    wget
+    wget \
+    xserver-xorg
+
+RUN dpkg-reconfigure xserver-xorg
 
 # Create a user with passwordless sudo
 RUN adduser --gecos "Development User" --disabled-password $USER
@@ -55,6 +61,7 @@ ENV NVIDIA_VISIBLE_DEVICES=all NVIDIA_DRIVER_CAPABILITIES=all
 
 USER $USER
 RUN echo ". /opt/ros/$ROS1_DISTRO/setup.bash" >> /home/$USER/.bashrc
+RUN rosdep update
 USER root
 
 # Workspace
