@@ -31,6 +31,11 @@ RUN adduser $USER sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER root
 
+# Update ROS GPG keys
+# https://discourse.ros.org/t/new-gpg-keys-deployed-for-packages-ros-org/9454
+RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+RUN apt-key del 421C365BD9FF1F717815A3895523BAEEB01FA116
+
 # Setup sources.list
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list
 
