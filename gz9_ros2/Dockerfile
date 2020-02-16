@@ -3,7 +3,7 @@ LABEL maintainer="Emiliano Borghi"
 
 ARG ros2
 ENV ROS2_DISTRO ${ros2}
-ENV USER packt
+ENV USER docker_ros
 
 USER root
 
@@ -40,7 +40,7 @@ RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions
 
 # Source ros2 automatically
-RUN echo ". /opt/ros/$ROS2_DISTRO/setup.bash" >> /home/$USER/.bashrc
+RUN echo ". /opt/ros/$ROS2_DISTRO/setup.bash" >> /home/${USER}/.bashrc
 
 # nvidia-docker2 for Ubuntu18.04
 # FROM nvidia/opengl:1.0-glvnd-runtime-ubuntu18.04 as nvidia

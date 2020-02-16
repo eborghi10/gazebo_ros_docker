@@ -5,13 +5,9 @@ DOCKER_ARGS?=
 #--------------------------------------------------------------------------
 # Stable and local targets
 
-.PHONY: gz9_kinetic
-gz9_kinetic:
-	docker build ${DOCKER_ARGS} -t gz9_kinetic gz9_kinetic
-
-.PHONY: gz9_dashing
-gz9_crystal: ubuntu_18
-	docker build ${DOCKER_ARGS} -t gz9_crystal gz9_crystal
+.PHONY: gz9_ros1
+gz9_ros1: ubuntu_18
+	docker build ${DOCKER_ARGS} --build-arg ros1=$(VERSION) -t gz9_ros1 gz9_ros1
 
 .PHONY: gz9_ros2
 gz9_ros2: ubuntu_18
@@ -19,4 +15,4 @@ gz9_ros2: ubuntu_18
 
 .PHONY: ubuntu_18
 ubuntu_18:
-	docker build ${DOCKER_ARGS} -t ubuntu_18 ubuntu_18
+	docker build ${DOCKER_ARGS} --build-arg uid=$(shell id -u) -t ubuntu_18 ubuntu_18

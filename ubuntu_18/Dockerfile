@@ -1,7 +1,8 @@
 FROM ubuntu:18.04
 LABEL maintainer="Emiliano Borghi"
 
-ENV USER packt
+ARG uid
+ENV USER docker_ros
 
 # Setup environment
 RUN apt-get update && apt-get install -y locales
@@ -19,7 +20,7 @@ RUN apt-get update && \
     tmux
 
 # Create a user with passwordless sudo
-RUN adduser --gecos "Development User" --disabled-password $USER
+RUN adduser --gecos "Development User" --disabled-password -u ${uid} $USER
 RUN adduser $USER sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER root

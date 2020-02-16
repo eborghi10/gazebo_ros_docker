@@ -2,8 +2,8 @@
 
 ### Available Dockers
 
-- `gz9_kinetic` : ROS Kinetic + Gazebo 9 (Ubuntu 16.04)
-- `gz9_crystal` : ROS 2 Crystal + Gazebo 9 (Ubuntu 18.04)
+- `gz9_ros1` : ROS 1 + Gazebo 9 (Ubuntu 16.04)
+- `gz9_ros2` : ROS 2 + Gazebo 9 (Ubuntu 18.04)
 
 ### Generate docker image
 
@@ -40,4 +40,21 @@ Try the image:
 ```bash
 $ echo $ROS_DISTRO
 dashing
+```
+
+# Compile ROS 1 Melodic with Gazebo
+
+```bash
+make VERSION=melodic gz9_ros1
+```
+
+Try the image:
+
+```bash
+./run_docker.sh -d gz9_ros1
+```
+
+```bash
+$ echo $ROS_DISTRO
+melodic
 ```

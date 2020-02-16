@@ -1,45 +1,56 @@
 FROM ubuntu_18
+
 LABEL maintainer="Emiliano Borghi"
 
-ENV ROS2_DISTRO crystal
-ENV USER packt
+ARG ros1
+ENV ROS1_DISTRO ${ros1}
+ENV USER docker_ros
 
 USER root
 
-# Tmux
+# Setup environment
+RUN apt-get update && apt-get install -y locales
+RUN locale-gen en_US.UTF-8
+ENV \
+  LANG=en_US.UTF-8 \
+  DEBIAN_FRONTEND=noninteractive \
+  TERM=xterm
+
+RUN apt-get remove -y --purge xserver-xorg
+
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
-    curl \
     gnupg2 \
-    lsb-release \
+    mesa-utils \
     sudo \
-    tmux
+    tmux \
+    wget \
+    xserver-xorg
 
-# setup keys
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
-RUN curl http://repo.ros2.org/repos.key | apt-key add -
+RUN dpkg-reconfigure xserver-xorg
 
-# setup sources.list
-RUN echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list
-RUN echo "deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list
+# Add ROS keys
+# https://discourse.ros.org/t/new-gpg-keys-deployed-for-packages-ros-org/9454
+RUN echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list
+RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 
-# install ros2 packages
+# Add Gazebo keys
+RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list
+RUN wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+
+# Install ROS packages
 RUN apt-get update && \
     apt-get install -y \
-    ros-$ROS2_DISTRO-desktop
+    ros-${ROS1_DISTRO}-desktop
 
-# install bootstrap tools
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    ros-$ROS2_DISTRO-gazebo-*
+RUN apt-get update && \
+    apt-get install -y \
+    gazebo9 \
+    libgazebo9-dev \
+    ros-${ROS1_DISTRO}-gazebo-ros-pkgs \
+    ros-${ROS1_DISTRO}-gazebo-ros-control
 
-# install ros2 packages
-RUN apt-get update && apt-get install -y \
-    ros-$ROS2_DISTRO-ros1-bridge \
-    python3-argcomplete \
-    python3-colcon-common-extensions
-
-# Source ros2 automatically
-RUN echo ". /opt/ros/$ROS2_DISTRO/setup.bash" >> /home/$USER/.bashrc
+# ==================
 
 # nvidia-docker2 for Ubuntu18.04
 # FROM nvidia/opengl:1.0-glvnd-runtime-ubuntu18.04 as nvidia
@@ -80,14 +91,22 @@ RUN apt-get update && \
 
 COPY 10_nvidia.json /usr/share/glvnd/egl_vendor.d/10_nvidia.json
 
-# Workspace
-RUN mkdir -p /colcon_ws/src/ && \
-    chown -R $USER /colcon_ws
+# ==================
+
 RUN rosdep init
 USER $USER
-WORKDIR /colcon_ws/
+RUN echo ". /opt/ros/${ROS1_DISTRO}/setup.bash" >> /home/${USER}/.bashrc
 RUN rosdep update
 USER root
+
+# Workspace
+RUN mkdir -p /catkin_ws/src/ && \
+    chown -R $USER /catkin_ws
+
+WORKDIR /catkin_ws/
+
+RUN usermod -a -G video $USER
+RUN usermod -a -G dialout $USER
 
 RUN apt-get update
 
