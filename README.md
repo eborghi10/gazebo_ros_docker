@@ -2,59 +2,63 @@
 
 ### Available Dockers
 
-- `gz9_ros1` : ROS 1 + Gazebo 9 (Ubuntu 16.04)
-- `gz9_ros2` : ROS 2 + Gazebo 9 (Ubuntu 18.04)
+- ROS 1 (Melodic release only) + Gazebo 9
+- ROS 2 + Gazebo 9
 
 ### Generate docker image
 
 ```bash
-$ make $DOCKER_IMAGE
+$ ./build
+```
+
+#### Optional arguments
+
+- [`-r1`|`--ros1`]: select ROS 1 version (`melodic`). Enabled by default.
+- [`-r2`|`--ros2`]: select ROS 2 version.
+- [`-g`|`--gazebo`]: select Gazebo version. Only Gazebo 9 is supported for ROS 2.
+
+#### Examples
+
+ROS 1 Melodic + Gazebo 11
+
+```
+./build --gazebo 11
+```
+
+ROS 2 Eloquent + Gazebo 9
+
+```
+./build --ros2 eloquent
 ```
 
 ### Run docker image
 
 ```bash
-./run_docker.sh -d $DOCKER_IMAGE
+./run
 ```
 
-### NOTES
+#### Optional arguments
 
-- You need to have installed `nvidia-docker2` in your machine in order to make it work. If you don't have it, disable the `--runtime=nvidia` line in `run_docker.sh`.
+- [`-r1`|`--ros1`]: select ROS 1 version (`melodic`). Enabled by default.
+- [`-r2`|`--ros2`]: select ROS 2 version.
+- [`-c`|`--cmd`]: run command (default is `bash`). `tmux` can be used too.
 
-----
+**Note:** You don't need to specify the Gazebo version.
 
-# Compile any ROS 2 version
+#### Examples
 
-The following example is given with ROS 2 Dashing.
+ROS 1 Melodic + Gazebo 11
 
-```bash
-make VERSION=dashing gz9_ros2
+```
+./run --cmd tmux
 ```
 
-Try the image:
+ROS 2 Eloquent + Gazebo 9
 
-```bash
-./run_docker.sh -d gz9_ros2
+```
+./run --ros2 eloquent --cmd tmux
 ```
 
-```bash
-$ echo $ROS_DISTRO
-dashing
-```
+### IMPORTANT
 
-# Compile ROS 1 Melodic with Gazebo
-
-```bash
-make VERSION=melodic gz9_ros1
-```
-
-Try the image:
-
-```bash
-./run_docker.sh -d gz9_ros1
-```
-
-```bash
-$ echo $ROS_DISTRO
-melodic
-```
+- You need to have installed `nvidia-docker2` in your machine in order to make it work **ONLY** if you have an Nvidia GPU.

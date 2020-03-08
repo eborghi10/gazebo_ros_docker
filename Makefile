@@ -5,13 +5,21 @@ DOCKER_ARGS?=
 #--------------------------------------------------------------------------
 # Stable and local targets
 
-.PHONY: gz9_ros1
-gz9_ros1: ubuntu_18
-	docker build ${DOCKER_ARGS} --build-arg ros1=$(VERSION) -t gz9_ros1 gz9_ros1
+.PHONY: ros1_nvidia
+ros1_nvidia: ros1
+	docker build ${DOCKER_ARGS} -t ros1_nvidia ros1_nvidia
 
-.PHONY: gz9_ros2
-gz9_ros2: ubuntu_18
-	docker build ${DOCKER_ARGS} --build-arg ros2=$(VERSION) -t gz9_ros2 gz9_ros2
+.PHONY: ros2_nvidia
+ros2_nvidia: ros2
+	docker build ${DOCKER_ARGS} -t ros2_nvidia ros2_nvidia
+
+.PHONY: ros1
+ros1: ubuntu_18
+	docker build ${DOCKER_ARGS} --build-arg ros1=$(ROS_VERSION) --build-arg gz=$(GZ_VERSION) -t ros1 ros1
+
+.PHONY: ros2
+ros2: ubuntu_18
+	docker build ${DOCKER_ARGS} --build-arg ros2=$(ROS_VERSION) --build-arg gz=$(GZ_VERSION) -t ros2 ros2
 
 .PHONY: ubuntu_18
 ubuntu_18:
