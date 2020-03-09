@@ -12,15 +12,15 @@ import os
 
 IMAGE_NAME = "gazebo_ros_docker"
 
-def run_dev_environment(command, ros1="melodic", ros2=""):
+def run_dev_environment(command, ws_mount, ros1="melodic", ros2=""):
     user = ut.get_user()
     docker_args = []
     dockerfile  = '{}'.format('ros1' if ros2 == '' else 'ros2')
-    
+
     temp_volume = "/home/{}/.{}".format(user, IMAGE_NAME)
 
     # Workspace name
-    ws_name = "_ws".format("catkin" if ros2 == "" else "colcon")
+    ws_name = "{}_ws".format("catkin" if ros2 == "" else "colcon")
 
     docker_args.append("-it")
     docker_args.append("--rm")
@@ -34,7 +34,7 @@ def run_dev_environment(command, ros1="melodic", ros2=""):
     # Keep user settings
     docker_args.append("--volume {}/user/:/home/{}/".format(temp_volume, user))
     # Mount workspace
-    docker_args.append("--volume {}:/{}/src".format(os.path.dirname(ut.get_repo_root()), ws_name))
+    docker_args.append("--volume {}:/{}".format(ws_mount, ws_name))
     docker_args.append("--volume {}/ws/build/:/{}/build/".format(temp_volume, ws_name))
     docker_args.append("--volume {}/ws/devel/:/{}/devel/".format(temp_volume, ws_name))
 
@@ -77,10 +77,11 @@ def main():
     parser.add_argument('-c', '--cmd', dest='command', default='bash')
     parser.add_argument('-r1', '--ros1', dest="ros1_version", default="melodic")
     parser.add_argument('-r2', '--ros2', dest="ros2_version", default="")
+    parser.add_argument('-ws', '--workspace', dest='workspace', default="/home/{}/catkin_ws".format(ut.get_user()))
     args = parser.parse_args()
 
     if not is_running():
-        run_dev_environment(args.command, ros1=args.ros1_version, ros2=args.ros2_version)
+        run_dev_environment(args.command, ws_mount=args.workspace, ros1=args.ros1_version, ros2=args.ros2_version)
     else:
         attach_dev_environment(args.command)
 
