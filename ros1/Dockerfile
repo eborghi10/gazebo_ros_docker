@@ -40,6 +40,11 @@ RUN apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list
 RUN wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
 
+# Install bootstrap tools
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    python-rosdep \
+    python-rosinstall
+
 # Install ROS packages
 RUN apt-get update && \
     apt-get install -y \
@@ -49,6 +54,12 @@ RUN apt-get update && \
     apt-get install -y \
     gazebo${GZ_VERSION} \
     libgazebo${GZ_VERSION}-dev
+
+# Install dependencies
+# https://unix.stackexchange.com/a/391112
+COPY packages.txt packages.txt
+RUN apt-get update && \
+    xargs -a packages.txt apt-get install -y
 
 # ==================
 
