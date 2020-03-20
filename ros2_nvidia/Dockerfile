@@ -8,7 +8,7 @@ USER root
 # nvidia-docker2 for Ubuntu18.04
 # FROM nvidia/opengl:1.0-glvnd-runtime-ubuntu18.04 as nvidia
 RUN rm -rf /var/lib/apt/lists/*
-ENV NVIDIA_VISIBLE_DEVICES=all 
+ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=all
 
 RUN apt-get update && \
@@ -43,5 +43,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY 10_nvidia.json /usr/share/glvnd/egl_vendor.d/10_nvidia.json
+
+RUN apt-get update
 
 USER $USER
